@@ -9,7 +9,7 @@ export interface CountryMapData {
   color: number;
 }
 
-export const mapSize = 14;
+export const mapSize = 15;
 
 export const mapData: Record<string, CountryMapData> = {
   georgia: {
@@ -17,16 +17,16 @@ export const mapData: Record<string, CountryMapData> = {
     color: 0x67ffc6,
   },
   armenia: {
-    rows: [{ x: [0, 0], y: 13 }],
-    color: 0xc22625,
+    rows: [{ x: [0, 0], y: 14 }],
+    color: 0x9b0c28,
   },
   india: {
-    rows: [{ x: [13, 13], y: 13 }],
+    rows: [{ x: [14, 14], y: 14 }],
     color: 0x1e0942,
   },
   russia: {
-    rows: [{ x: [13, 13], y: 0 }],
-    color: 0x2b570a,
+    rows: [{ x: [14, 14], y: 0 }],
+    color: 0x38d126,
   },
   // Add more countries here...
 };

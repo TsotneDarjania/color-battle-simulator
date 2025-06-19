@@ -37,10 +37,11 @@ export default class MapUnit {
 
   addCannon() {
     this.cannon = this.scene.add.image(this.unit.x, this.unit.y, "cannon");
+    this.cannon.setTint(0xff4f00);
 
     this.cannon.setDisplaySize(
-      gamePlayConfig.unitWidth - 20,
-      gamePlayConfig.unitWidth - 20
+      gamePlayConfig.unitWidth - 12,
+      gamePlayConfig.unitWidth - 12
     );
 
     this.scene.tweens.add({
@@ -55,7 +56,7 @@ export default class MapUnit {
   shoot() {
     if (!this.cannon) return;
     const angle = this.cannon.rotation;
-    const xOffset = 12;
+    const xOffset = 6;
     const yOffset = -4;
 
     const rotatedX = Math.cos(angle) * xOffset - Math.sin(angle) * yOffset;

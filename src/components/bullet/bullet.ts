@@ -15,10 +15,11 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
     super(scene, x, y, "circle");
     scene.add.existing(this);
     scene.physics.add.existing(this);
+    this.setTint(0xff4f00);
 
     this.setDisplaySize(
-      gamePlayConfig.unitWidth - 30,
-      gamePlayConfig.unitWidth - 30
+      gamePlayConfig.unitWidth - 24,
+      gamePlayConfig.unitWidth - 24
     );
     this.setCircle(12);
     this.setBounce(1);

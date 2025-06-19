@@ -39,7 +39,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x000000)
+          .setTint(0x08191f)
       );
 
       // Bottom
@@ -50,7 +50,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x000000)
+          .setTint(0x08191f)
       );
     }
 
@@ -66,7 +66,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x000000)
+          .setTint(0x08191f)
       );
 
       // Right
@@ -77,7 +77,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x000000)
+          .setTint(0x08191f)
       );
     }
   }
@@ -114,7 +114,7 @@ export class GameMap {
             this.scene,
             x * unitSize,
             y * unitSize,
-            0x555555, // gray color
+            0x040c12,
             "default"
           );
 

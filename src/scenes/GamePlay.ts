@@ -1,7 +1,10 @@
+// Responsive camera zoom adjustment for different screen sizes
 import Phaser from "phaser";
 import { GameMap } from "../components/gameMap/map";
 import CanvasScene from "./CanvasScene";
 import { GameManager } from "../core/GameManager";
+import { gamePlayConfig } from "../config";
+import { mapSize } from "../mapData";
 
 export default class GamePlay extends Phaser.Scene {
   unitGroup!: Phaser.Physics.Arcade.StaticGroup;
@@ -12,7 +15,6 @@ export default class GamePlay extends Phaser.Scene {
   canvasScene!: CanvasScene;
   gameManager!: GameManager;
 
-  // Camera movement target
   cameraTarget = {
     x: 0,
     y: 0,
@@ -26,10 +28,24 @@ export default class GamePlay extends Phaser.Scene {
   create() {
     this.unitGroup = this.physics.add.staticGroup();
 
+    this.adjustCameraZoomToFitMap();
     this.addGameMap();
     this.setupCameraControls();
     this.runCanvasScene();
     this.createGameManager();
+  }
+
+  adjustCameraZoomToFitMap() {
+    const cam = this.cameras.main;
+    const unitSize = gamePlayConfig.unitWidth;
+    const mapPixelSize = mapSize * unitSize;
+
+    const zoomX = cam.width / mapPixelSize;
+    const zoomY = cam.height / mapPixelSize;
+    const targetZoom = Math.min(zoomX, zoomY);
+
+    this.cameraTarget.zoom = Phaser.Math.Clamp(targetZoom, 0.4, 1);
+    cam.setZoom(this.cameraTarget.zoom);
   }
 
   createGameManager() {
@@ -43,6 +59,22 @@ export default class GamePlay extends Phaser.Scene {
 
   addGameMap() {
     this.gameMap = new GameMap(this);
+
+    const cam = this.cameras.main;
+    const unitSize = gamePlayConfig.unitWidth;
+    const mapPixelSize = unitSize * mapSize;
+
+    const mapCenterX = mapPixelSize / 2;
+    const mapCenterY = mapPixelSize / 2;
+
+    const screenCenterX = cam.width / 2;
+    const screenCenterY = cam.height / 2;
+
+    this.cameraTarget.x = mapCenterX - screenCenterX / cam.zoom;
+    this.cameraTarget.y = mapCenterY - screenCenterY / cam.zoom;
+
+    cam.scrollX = this.cameraTarget.x;
+    cam.scrollY = this.cameraTarget.y;
   }
 
   setupCameraControls() {
@@ -56,13 +88,11 @@ export default class GamePlay extends Phaser.Scene {
       E: Phaser.Input.Keyboard.KeyCodes.E,
     }) as any;
 
-    // Initial camera target setup
     const cam = this.cameras.main;
     this.cameraTarget.x = cam.scrollX;
     this.cameraTarget.y = cam.scrollY;
     this.cameraTarget.zoom = cam.zoom;
 
-    // Mouse wheel zoom
     this.input.on("wheel", (_: any, __: number, deltaY: number) => {
       const zoomChange = deltaY > 0 ? -0.1 : 0.1;
       this.cameraTarget.zoom = Phaser.Math.Clamp(
@@ -71,9 +101,6 @@ export default class GamePlay extends Phaser.Scene {
         3
       );
     });
-
-    // Optional: set default zoom
-    cam.setZoom(1);
   }
 
   update() {
