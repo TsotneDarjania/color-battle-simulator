@@ -1,4 +1,3 @@
-import Phaser from "phaser";
 import { Wheel } from "../components/wheel/wheel";
 import { mapData } from "../mapData";
 import GamePlay from "./GamePlay";
@@ -30,28 +29,36 @@ export default class CanvasScene extends Phaser.Scene {
     this.addOverlayAndText();
     this.createMobileControls();
 
+    const inputZone = this.add
+      .rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0)
+      .setOrigin(0)
+      .setInteractive()
+      .setDepth(10000);
+
     const startSimulation = () => {
       if (this.controlsEnabled) return;
-
-      this.overlay?.setVisible(false);
-      this.startText?.setVisible(false);
-      this.infoTextLeft?.setVisible(false);
-      this.infoTextKeys?.setVisible(false);
-      this.infoTextRight?.setVisible(false);
       this.controlsEnabled = true;
+
+      this.overlay.setVisible(false);
+      this.startText.setVisible(false);
+      this.infoTextLeft.setVisible(false);
+      this.infoTextKeys.setVisible(false);
+      this.infoTextRight.setVisible(false);
+      inputZone.destroy();
 
       this.controlButtons.forEach((btn) => btn.setVisible(true));
 
-      // Trigger all wheels to spin
+      // Start spin and auto-spin for all wheels
       this.wheels.forEach((wheel) => {
-        if (!wheel.isSpinning && typeof wheel.spin === "function") {
+        if (!wheel.isSpinning && !wheel.autoSpinStarted) {
           wheel.spin();
+          wheel.startAutoSpin();
         }
       });
     };
 
-    // Start on pointer (tap/click) for all platforms
-    this.input.once("pointerdown", startSimulation);
+    this.input.keyboard.on("keydown-SPACE", startSimulation);
+    inputZone.on("pointerdown", startSimulation);
 
     window.addEventListener("orientationchange", () => {
       setTimeout(() => {
@@ -146,21 +153,26 @@ export default class CanvasScene extends Phaser.Scene {
       .setDepth(10);
 
     this.startText = this.add
-      .text(width / 2, height / 2 - 60, "Tap to start simulation", {
-        fontFamily: "Arial",
-        fontSize: "36px",
-        fontStyle: "bold",
-        color: "#ffffff",
-        stroke: "#000000",
-        strokeThickness: 6,
-        shadow: {
-          offsetX: 2,
-          offsetY: 2,
-          color: "#000000",
-          blur: 4,
-          fill: true,
-        },
-      })
+      .text(
+        width / 2,
+        height / 2 - 60,
+        "Press SPACE or Tap to start simulation",
+        {
+          fontFamily: "Arial",
+          fontSize: "36px",
+          fontStyle: "bold",
+          color: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 6,
+          shadow: {
+            offsetX: 2,
+            offsetY: 2,
+            color: "#000000",
+            blur: 4,
+            fill: true,
+          },
+        }
+      )
       .setOrigin(0.5)
       .setDepth(11);
 
