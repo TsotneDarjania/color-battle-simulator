@@ -6,22 +6,29 @@ import GamePlay from "./GamePlay";
 export default class CanvasScene extends Phaser.Scene {
   wheels: Array<Wheel> = [];
   gamePlaySceme!: GamePlay;
+
   overlay!: Phaser.GameObjects.Rectangle;
   startText!: Phaser.GameObjects.Text;
   infoTextLeft!: Phaser.GameObjects.Text;
   infoTextKeys!: Phaser.GameObjects.Text;
   infoTextRight!: Phaser.GameObjects.Text;
+  orientationText!: Phaser.GameObjects.Text;
   controlsEnabled = false;
+
+  controlButtons: Phaser.GameObjects.Text[] = [];
 
   constructor() {
     super("CanvasScene");
   }
 
   create() {
+    this.checkOrientation();
+
     this.gamePlaySceme = this.scene.get("GamePlay") as GamePlay;
 
     this.addWheels();
     this.addOverlayAndText();
+    this.createMobileControls();
 
     this.input.keyboard.on("keydown-SPACE", () => {
       if (!this.controlsEnabled) {
@@ -31,8 +38,49 @@ export default class CanvasScene extends Phaser.Scene {
         this.infoTextKeys.setVisible(false);
         this.infoTextRight.setVisible(false);
         this.controlsEnabled = true;
+
+        this.controlButtons.forEach((btn) => btn.setVisible(true));
       }
     });
+
+    window.addEventListener("orientationchange", () => {
+      setTimeout(() => {
+        if (window.innerHeight < window.innerWidth) {
+          window.location.reload();
+        }
+      }, 500);
+    });
+  }
+
+  checkOrientation() {
+    const isMobile =
+      this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+    if (!isMobile) return;
+
+    if (window.innerHeight > window.innerWidth) {
+      const { width, height } = this.sys.game.canvas;
+
+      this.add
+        .rectangle(0, 0, width * 2, height * 2, 0x000000, 0.9)
+        .setOrigin(0)
+        .setScrollFactor(0)
+        .setDepth(999);
+
+      this.orientationText = this.add
+        .text(width / 2, height / 2, "Please rotate your phone", {
+          fontFamily: "Arial",
+          fontSize: "42px",
+          fontStyle: "bold",
+          color: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 6,
+          align: "center",
+        })
+        .setOrigin(0.5)
+        .setDepth(1000);
+
+      this.scene.pause();
+    }
   }
 
   addWheels() {
@@ -41,7 +89,6 @@ export default class CanvasScene extends Phaser.Scene {
 
     const screenW = this.cameras.main.width;
     const screenH = this.cameras.main.height;
-
     const wheelRadius = Math.min(screenW, screenH) * 0.18;
     const marginX = screenW * 0.05;
     const marginY = screenH * 0.05;
@@ -50,13 +97,13 @@ export default class CanvasScene extends Phaser.Scene {
 
     if (count <= 4) {
       const corners = [
-        { x: marginX + wheelRadius, y: marginY + wheelRadius }, // top-left (1)
-        { x: marginX + wheelRadius, y: screenH - marginY - wheelRadius }, // bottom-left (4)
+        { x: marginX + wheelRadius, y: marginY + wheelRadius }, // top-left
+        { x: marginX + wheelRadius, y: screenH - marginY - wheelRadius }, // bottom-left
         {
           x: screenW - marginX - wheelRadius,
           y: screenH - marginY - wheelRadius,
-        }, // bottom-right (2)
-        { x: screenW - marginX - wheelRadius, y: marginY + wheelRadius }, // top-right (3)
+        }, // bottom-right
+        { x: screenW - marginX - wheelRadius, y: marginY + wheelRadius }, // top-right
       ];
       positions.push(...corners.slice(0, count));
     } else {
@@ -83,13 +130,11 @@ export default class CanvasScene extends Phaser.Scene {
   addOverlayAndText() {
     const { width, height } = this.cameras.main;
 
-    // Dark transparent overlay
     this.overlay = this.add
       .rectangle(0, 0, width * 2, height * 2, 0x000000, 0.75)
       .setOrigin(0)
       .setDepth(10);
 
-    // Main title
     this.startText = this.add
       .text(width / 2, height / 2 - 60, "Press SPACE to start simulation", {
         fontFamily: "Arial",
@@ -109,7 +154,6 @@ export default class CanvasScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(11);
 
-    // Instruction parts
     const instruction = "Use ";
     const keys = "ASDW";
     const rest = " to move camera, Q to zoom out, E to zoom in";
@@ -154,19 +198,86 @@ export default class CanvasScene extends Phaser.Scene {
       .setOrigin(0, 0.5)
       .setDepth(11);
 
-    // Center alignment of combined text
     const totalWidth =
       this.infoTextLeft.width +
       this.infoTextKeys.width +
       this.infoTextRight.width +
       spacer * 2;
-
     let x = baseX - totalWidth / 2;
+
     this.infoTextLeft.setPosition(x, baseY);
     x += this.infoTextLeft.width + spacer;
     this.infoTextKeys.setPosition(x, baseY);
     x += this.infoTextKeys.width + spacer;
     this.infoTextRight.setPosition(x, baseY);
+  }
+
+  createMobileControls() {
+    const isMobile =
+      this.sys.game.device.os.android || this.sys.game.device.os.iOS;
+    if (!isMobile) return;
+
+    const { width, height } = this.cameras.main;
+    const btnSize = 50;
+    const moveSpeed = 40;
+    const zoomSpeed = 0.08;
+    const paddingBetween = 10;
+
+    const camTarget = this.gamePlaySceme.cameraTarget;
+    const controlIntervals: { [key: string]: number } = {};
+
+    const makeBtn = (
+      label: string,
+      x: number,
+      y: number,
+      action: () => void
+    ) => {
+      const btn = this.add
+        .text(x, y, label, {
+          fontFamily: "Arial",
+          fontSize: "28px",
+          backgroundColor: "#444",
+          color: "#fff",
+          fixedWidth: btnSize,
+          fixedHeight: btnSize,
+          align: "center",
+          padding: { top: 8, bottom: 8, left: 12, right: 12 },
+        })
+        .setOrigin(0.5)
+        .setDepth(100)
+        .setScrollFactor(0)
+        .setInteractive({ useHandCursor: true })
+        .setVisible(false);
+
+      btn.on("pointerdown", () => {
+        action();
+        controlIntervals[label] = window.setInterval(action, 100);
+      });
+
+      btn.on("pointerup", () => clearInterval(controlIntervals[label]));
+      btn.on("pointerout", () => clearInterval(controlIntervals[label]));
+      btn.on("pointerupoutside", () => clearInterval(controlIntervals[label]));
+
+      this.controlButtons.push(btn);
+    };
+
+    const centerX = width / 2;
+    const baseY = height - btnSize * 2.2;
+
+    // Arrows
+    makeBtn("↑", centerX, baseY - btnSize, () => (camTarget.y -= moveSpeed));
+    makeBtn("↓", centerX, baseY + btnSize, () => (camTarget.y += moveSpeed));
+    makeBtn("←", centerX - btnSize, baseY, () => (camTarget.x -= moveSpeed));
+    makeBtn("→", centerX + btnSize, baseY, () => (camTarget.x += moveSpeed));
+
+    // Zoom buttons to the right
+    const zoomX = centerX + btnSize * 2.2;
+    makeBtn("+", zoomX, baseY - btnSize / 2, () => {
+      camTarget.zoom = Phaser.Math.Clamp(camTarget.zoom + zoomSpeed, 0.2, 3);
+    });
+    makeBtn("−", zoomX, baseY + btnSize / 2 + paddingBetween, () => {
+      camTarget.zoom = Phaser.Math.Clamp(camTarget.zoom - zoomSpeed, 0.2, 3);
+    });
   }
 
   onWheelResult(index: number, country: string, multiple: number) {
