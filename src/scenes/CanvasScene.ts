@@ -30,18 +30,28 @@ export default class CanvasScene extends Phaser.Scene {
     this.addOverlayAndText();
     this.createMobileControls();
 
-    this.input.keyboard.on("keydown-SPACE", () => {
-      if (!this.controlsEnabled) {
-        this.overlay.setVisible(false);
-        this.startText.setVisible(false);
-        this.infoTextLeft.setVisible(false);
-        this.infoTextKeys.setVisible(false);
-        this.infoTextRight.setVisible(false);
-        this.controlsEnabled = true;
+    const startSimulation = () => {
+      if (this.controlsEnabled) return;
 
-        this.controlButtons.forEach((btn) => btn.setVisible(true));
-      }
-    });
+      this.overlay?.setVisible(false);
+      this.startText?.setVisible(false);
+      this.infoTextLeft?.setVisible(false);
+      this.infoTextKeys?.setVisible(false);
+      this.infoTextRight?.setVisible(false);
+      this.controlsEnabled = true;
+
+      this.controlButtons.forEach((btn) => btn.setVisible(true));
+
+      // Trigger all wheels to spin
+      this.wheels.forEach((wheel) => {
+        if (!wheel.isSpinning && typeof wheel.spin === "function") {
+          wheel.spin();
+        }
+      });
+    };
+
+    // Start on pointer (tap/click) for all platforms
+    this.input.once("pointerdown", startSimulation);
 
     window.addEventListener("orientationchange", () => {
       setTimeout(() => {
@@ -97,13 +107,13 @@ export default class CanvasScene extends Phaser.Scene {
 
     if (count <= 4) {
       const corners = [
-        { x: marginX + wheelRadius, y: marginY + wheelRadius }, // top-left
-        { x: marginX + wheelRadius, y: screenH - marginY - wheelRadius }, // bottom-left
+        { x: marginX + wheelRadius, y: marginY + wheelRadius },
+        { x: marginX + wheelRadius, y: screenH - marginY - wheelRadius },
         {
           x: screenW - marginX - wheelRadius,
           y: screenH - marginY - wheelRadius,
-        }, // bottom-right
-        { x: screenW - marginX - wheelRadius, y: marginY + wheelRadius }, // top-right
+        },
+        { x: screenW - marginX - wheelRadius, y: marginY + wheelRadius },
       ];
       positions.push(...corners.slice(0, count));
     } else {
@@ -136,7 +146,7 @@ export default class CanvasScene extends Phaser.Scene {
       .setDepth(10);
 
     this.startText = this.add
-      .text(width / 2, height / 2 - 60, "Press SPACE to start simulation", {
+      .text(width / 2, height / 2 - 60, "Tap to start simulation", {
         fontFamily: "Arial",
         fontSize: "36px",
         fontStyle: "bold",
@@ -264,13 +274,11 @@ export default class CanvasScene extends Phaser.Scene {
     const centerX = width / 2;
     const baseY = height - btnSize * 2.2;
 
-    // Arrows
     makeBtn("↑", centerX, baseY - btnSize, () => (camTarget.y -= moveSpeed));
     makeBtn("↓", centerX, baseY + btnSize, () => (camTarget.y += moveSpeed));
     makeBtn("←", centerX - btnSize, baseY, () => (camTarget.x -= moveSpeed));
     makeBtn("→", centerX + btnSize, baseY, () => (camTarget.x += moveSpeed));
 
-    // Zoom buttons to the right
     const zoomX = centerX + btnSize * 2.2;
     makeBtn("+", zoomX, baseY - btnSize / 2, () => {
       camTarget.zoom = Phaser.Math.Clamp(camTarget.zoom + zoomSpeed, 0.2, 3);
