@@ -27,6 +27,7 @@ export class Wheel {
   }
 
   init() {
+    this.addFlag();
     this.addWheelShadow();
     this.wheelContainer = this.scene.add.container(this.x, this.y);
     this.drawWheelSegments();
@@ -35,10 +36,15 @@ export class Wheel {
 
     this.scene.input.keyboard.on("keydown-SPACE", () => {
       if (!this.isSpinning && !this.autoSpinStarted) {
-        this.spin(); // Spin once
-        this.startAutoSpin(); // Then start auto-spin
+        this.spin();
+        this.startAutoSpin();
       }
     });
+  }
+
+  addFlag() {
+    const image = this.scene.add.image(this.x, this.y, this.country);
+    image.setScale(0.65);
   }
 
   startAutoSpin() {
@@ -68,21 +74,18 @@ export class Wheel {
       const graphics = this.scene.add.graphics();
       const color = this.baseColor;
       const startAngle = Phaser.Math.DegToRad(currentAngle);
-      const endAngle = Phaser.Math.DegToRad(
-        currentAngle + this.segmentAngles[i]
-      );
+      const endAngle = Phaser.Math.DegToRad(currentAngle + this.segmentAngles[i]);
 
       graphics.fillStyle(color, 1);
+      graphics.lineStyle(3, 0xffffff, 1); // <-- lineStyle moved before path
       graphics.beginPath();
       graphics.moveTo(0, 0);
       graphics.arc(0, 0, this.radius, startAngle, endAngle, false);
       graphics.closePath();
       graphics.fillPath();
+      graphics.strokePath();
 
-      graphics.lineStyle(6, 0x000000, 0.25);
-      graphics.strokePath();
-      graphics.lineStyle(3, 0xffffff, 0.2);
-      graphics.strokePath();
+      graphics.setAlpha(0.6);
 
       this.wheelContainer.add(graphics);
       this.segmentRefs.push(graphics);
@@ -142,12 +145,8 @@ export class Wheel {
     this.arrow.setDepth(10);
   }
 
-  spin(
-    onComplete?: (index: number, country: string, multiple: number) => void
-  ) {
-    const units = gameRuntimeData.units.filter(
-      (u) => u.country === this.country
-    );
+  spin(onComplete?: (index: number, country: string, multiple: number) => void) {
+    const units = gameRuntimeData.units.filter((u) => u.country === this.country);
     if (units.length === 0) {
       this.destroy();
       return;
@@ -199,25 +198,16 @@ export class Wheel {
         });
 
         segment.clear();
-        const start = this.segmentAngles
-          .slice(0, index)
-          .reduce((a, b) => a + b, 0);
+        const start = this.segmentAngles.slice(0, index).reduce((a, b) => a + b, 0);
         const end = start + this.segmentAngles[index];
+
         segment.fillStyle(this.selectedColor, 1);
+        segment.lineStyle(3, 0xffffff, 1); // <-- moved before path
         segment.beginPath();
         segment.moveTo(0, 0);
-        segment.arc(
-          0,
-          0,
-          this.radius,
-          Phaser.Math.DegToRad(start),
-          Phaser.Math.DegToRad(end)
-        );
+        segment.arc(0, 0, this.radius, Phaser.Math.DegToRad(start), Phaser.Math.DegToRad(end));
         segment.closePath();
         segment.fillPath();
-        segment.lineStyle(6, 0x000000, 0.25);
-        segment.strokePath();
-        segment.lineStyle(3, 0xffffff, 0.2);
         segment.strokePath();
 
         const baseScale = iconKey === "new-cannon" ? 0.8 : 0.5;
@@ -257,22 +247,16 @@ export class Wheel {
             seg.clear();
             const s = this.segmentAngles.slice(0, i).reduce((a, b) => a + b, 0);
             const e = s + this.segmentAngles[i];
+
             seg.fillStyle(this.baseColor, 1);
+            seg.lineStyle(3, 0xFFFFFF, 1); // <-- moved before path
             seg.beginPath();
             seg.moveTo(0, 0);
-            seg.arc(
-              0,
-              0,
-              this.radius,
-              Phaser.Math.DegToRad(s),
-              Phaser.Math.DegToRad(e)
-            );
+            seg.arc(0, 0, this.radius, Phaser.Math.DegToRad(s), Phaser.Math.DegToRad(e));
             seg.closePath();
             seg.fillPath();
-            seg.lineStyle(6, 0x000000, 0.25);
             seg.strokePath();
-            seg.lineStyle(3, 0xffffff, 0.2);
-            seg.strokePath();
+
             seg.alpha = 1;
           });
 

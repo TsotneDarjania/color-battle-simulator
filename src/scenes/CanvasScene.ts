@@ -26,7 +26,7 @@ export default class CanvasScene extends Phaser.Scene {
     this.gamePlaySceme = this.scene.get("GamePlay") as GamePlay;
 
     this.addWheels();
-    this.addOverlayAndText();
+    // this.addOverlayAndText();
     this.createMobileControls();
 
     const inputZone = this.add

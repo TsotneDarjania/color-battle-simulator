@@ -12,19 +12,19 @@ export interface CountryMapData {
 export const mapSize = 15;
 
 export const mapData: Record<string, CountryMapData> = {
-  georgia: {
+  brazil: {
     rows: [{ x: [0, 0], y: 0 }],
     color: 0x67ffc6,
   },
-  armenia: {
+  italy: {
     rows: [{ x: [0, 0], y: 14 }],
     color: 0x9b0c28,
   },
-  india: {
+  germany: {
     rows: [{ x: [14, 14], y: 14 }],
     color: 0x1e0942,
   },
-  russia: {
+  spain: {
     rows: [{ x: [14, 14], y: 0 }],
     color: 0x38d126,
   },
