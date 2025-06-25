@@ -8,6 +8,7 @@ export class Wheel {
   segmentRefs: Phaser.GameObjects.Graphics[] = [];
   textRefs: Phaser.GameObjects.Text[] = [];
   shootLabel!: Phaser.GameObjects.Text;
+  flag!: Phaser.GameObjects.Image;
   isSpinning: boolean = false;
   autoSpinStarted: boolean = false;
 
@@ -43,13 +44,14 @@ export class Wheel {
   }
 
   addFlag() {
-    const image = this.scene.add.image(this.x, this.y, this.country);
-    image.setScale(0.65);
+    const flag = this.scene.add.image(this.x, this.y, this.country);
+    flag.setScale(0.65);
+    flag.setDepth(-2);
+    this.flag = flag;
   }
 
   startAutoSpin() {
     this.autoSpinStarted = true;
-
     this.scene.time.addEvent({
       delay: 2500,
       loop: true,
@@ -74,10 +76,12 @@ export class Wheel {
       const graphics = this.scene.add.graphics();
       const color = this.baseColor;
       const startAngle = Phaser.Math.DegToRad(currentAngle);
-      const endAngle = Phaser.Math.DegToRad(currentAngle + this.segmentAngles[i]);
+      const endAngle = Phaser.Math.DegToRad(
+        currentAngle + this.segmentAngles[i]
+      );
 
       graphics.fillStyle(color, 1);
-      graphics.lineStyle(3, 0xffffff, 1); // <-- lineStyle moved before path
+      graphics.lineStyle(3, 0xffffff, 1);
       graphics.beginPath();
       graphics.moveTo(0, 0);
       graphics.arc(0, 0, this.radius, startAngle, endAngle, false);
@@ -125,8 +129,7 @@ export class Wheel {
         });
 
         text.setOrigin(0.5);
-        text.setRotation(angleRad + Math.PI / 2);
-        text.setDepth(3);
+        text.setDepth(11); // Always above icon
         text.setShadow(1, 1, "#000000", 2, false, true);
 
         this.wheelContainer.add(text);
@@ -145,8 +148,12 @@ export class Wheel {
     this.arrow.setDepth(10);
   }
 
-  spin(onComplete?: (index: number, country: string, multiple: number) => void) {
-    const units = gameRuntimeData.units.filter((u) => u.country === this.country);
+  spin(
+    onComplete?: (index: number, country: string, multiple: number) => void
+  ) {
+    const units = gameRuntimeData.units.filter(
+      (u) => u.country === this.country
+    );
     if (units.length === 0) {
       this.destroy();
       return;
@@ -176,13 +183,11 @@ export class Wheel {
       ease: "Cubic.easeOut",
       onComplete: () => {
         const finalArrowAngle = ((this.arrow.angle % 360) + 360) % 360;
-        const relativeAngle = finalArrowAngle;
-
         let angleSum = 0;
         let index = 0;
         for (let i = 0; i < this.segmentAngles.length; i++) {
           angleSum += this.segmentAngles[i];
-          if (relativeAngle < angleSum) {
+          if (finalArrowAngle < angleSum) {
             index = i;
             break;
           }
@@ -193,19 +198,26 @@ export class Wheel {
         const iconKey = icon.texture.key;
 
         this.segmentRefs.forEach((seg) => {
-          seg.alpha = 1;
           this.scene.tweens.killTweensOf(seg);
         });
 
         segment.clear();
-        const start = this.segmentAngles.slice(0, index).reduce((a, b) => a + b, 0);
+        const start = this.segmentAngles
+          .slice(0, index)
+          .reduce((a, b) => a + b, 0);
         const end = start + this.segmentAngles[index];
 
         segment.fillStyle(this.selectedColor, 1);
-        segment.lineStyle(3, 0xffffff, 1); // <-- moved before path
+        segment.lineStyle(3, 0xffffff, 1);
         segment.beginPath();
         segment.moveTo(0, 0);
-        segment.arc(0, 0, this.radius, Phaser.Math.DegToRad(start), Phaser.Math.DegToRad(end));
+        segment.arc(
+          0,
+          0,
+          this.radius,
+          Phaser.Math.DegToRad(start),
+          Phaser.Math.DegToRad(end)
+        );
         segment.closePath();
         segment.fillPath();
         segment.strokePath();
@@ -248,17 +260,26 @@ export class Wheel {
             const s = this.segmentAngles.slice(0, i).reduce((a, b) => a + b, 0);
             const e = s + this.segmentAngles[i];
 
-            seg.fillStyle(this.baseColor, 1);
-            seg.lineStyle(3, 0xFFFFFF, 1); // <-- moved before path
+            seg.fillStyle(this.baseColor, 0.6);
+            seg.lineStyle(3, 0xffffff, 1);
             seg.beginPath();
             seg.moveTo(0, 0);
-            seg.arc(0, 0, this.radius, Phaser.Math.DegToRad(s), Phaser.Math.DegToRad(e));
+            seg.arc(
+              0,
+              0,
+              this.radius,
+              Phaser.Math.DegToRad(s),
+              Phaser.Math.DegToRad(e)
+            );
             seg.closePath();
             seg.fillPath();
             seg.strokePath();
-
-            seg.alpha = 1;
           });
+
+          // ✅ Reset shootLabel if landed on "shoot"
+          if (iconKey === "shoot") {
+            this.shootLabel.setText("1");
+          }
 
           blinkTween.remove();
           this.isSpinning = false;
@@ -278,10 +299,21 @@ export class Wheel {
     this.arrow?.destroy();
     this.shootLabel?.destroy();
     this.wheelContainer?.destroy();
+    this.flag?.destroy();
 
     const index = this.scene.wheels?.indexOf(this);
     if (index !== -1) {
       this.scene.wheels.splice(index, 1);
     }
+
+    // ✅ Add red "Eliminated" text at center
+    const eliminatedText = this.scene.add.text(this.x, this.y, "Eliminated", {
+      fontSize: "32px",
+      color: "#ff0000",
+      fontStyle: "bold",
+      align: "center",
+    });
+    eliminatedText.setOrigin(0.5);
+    eliminatedText.setDepth(20); // make sure it’s above everything
   }
 }
