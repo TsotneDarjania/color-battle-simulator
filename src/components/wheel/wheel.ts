@@ -276,17 +276,17 @@ export class Wheel {
             seg.strokePath();
           });
 
-          // ✅ Reset shootLabel if landed on "shoot"
-          if (iconKey === "shoot") {
-            this.shootLabel.setText("1");
-          }
-
           blinkTween.remove();
           this.isSpinning = false;
 
           const multiple = parseInt(this.shootLabel.text);
           this.scene.onWheelResult?.(index, this.country, multiple);
           onComplete?.(index, this.country, multiple);
+
+          // ✅ Reset shootLabel if landed on "shoot"
+          if (iconKey === "shoot") {
+            this.shootLabel.setText("1");
+          }
         });
       },
     });
