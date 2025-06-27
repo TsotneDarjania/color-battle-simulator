@@ -115,16 +115,21 @@ export class Wheel {
       icon.setDepth(2);
       this.wheelContainer.add(icon);
       this.iconRefs.push(icon);
+      
+      if(iconKeys[i] === "multiple-bullet") {
+        icon.setRotation((angleRad + Math.PI / 2) +0.5);
+      }
 
       if (iconKeys[i] === "shoot") {
+        icon.setPosition(icon.x, icon.y -=20);
         const textDistance = iconRadius + 30;
         const textX = Math.cos(angleRad) * textDistance;
         const textY = Math.sin(angleRad) * textDistance;
 
-        const text = this.scene.add.text(textX, textY, "1", {
-          fontSize: "18px",
+        const text = this.scene.add.text(textX -15, textY, "1", {
+          fontSize: "30px",
           color: "#ffffff",
-          fontStyle: "bold",
+          fontStyle: "bolder",
           align: "center",
         });
 
