@@ -1,6 +1,12 @@
 import { gamePlayConfig } from "../../config";
 import { gameRuntimeData } from "../../gameRuntimeData";
-import { CountryMapData, mapData, mapSize } from "../../mapData";
+import {
+  backgorundColor,
+  borderColor,
+  CountryMapData,
+  mapData,
+  mapSize,
+} from "../../mapData";
 import GamePlay from "../../scenes/GamePlay";
 import MapUnit from "../mapUnit/MapUnit";
 
@@ -39,7 +45,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x08191f)
+          .setTint(borderColor)
       );
 
       // Bottom
@@ -50,7 +56,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x08191f)
+          .setTint(borderColor)
       );
     }
 
@@ -66,7 +72,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x08191f)
+          .setTint(borderColor)
       );
 
       // Right
@@ -77,7 +83,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(0x08191f)
+          .setTint(borderColor)
       );
     }
   }
@@ -114,7 +120,7 @@ export class GameMap {
             this.scene,
             x * unitSize,
             y * unitSize,
-            0x040c12,
+            backgorundColor,
             "default"
           );
 
