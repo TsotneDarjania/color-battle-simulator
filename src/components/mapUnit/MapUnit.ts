@@ -6,7 +6,6 @@ import Bullet from "../bullet/bullet";
 export default class MapUnit {
   unit!: Phaser.Physics.Arcade.Image;
   cannon: Phaser.GameObjects.Image | undefined;
-
   bullet!: Bullet;
 
   constructor(
@@ -23,7 +22,6 @@ export default class MapUnit {
     ) as Phaser.Physics.Arcade.Image;
 
     this.unit.setImmovable(true);
-
     this.unit.setDisplaySize(
       gamePlayConfig.unitWidth,
       gamePlayConfig.unitWidth
@@ -33,6 +31,22 @@ export default class MapUnit {
 
     // ✅ Attach reference to self
     this.unit.setData("mapUnit", this);
+
+    // ✅ Draw rectangle border around the unit
+    const border = this.scene.add.graphics();
+    border.lineStyle(2, 0x000000, 1); // white border, thickness 2
+
+    const halfWidth = gamePlayConfig.unitWidth / 2;
+
+    border.strokeRect(
+      this.unit.x - halfWidth,
+      this.unit.y - halfWidth,
+      gamePlayConfig.unitWidth,
+      gamePlayConfig.unitWidth
+    );
+
+    border.setDepth(1); // make sure it's above the unit
+    this.unit.setData("border", border); // store border for potential cleanup
   }
 
   addCannon() {
@@ -47,14 +61,15 @@ export default class MapUnit {
     this.scene.tweens.add({
       targets: this.cannon,
       angle: 360,
-      duration: 4000, // 4 seconds per full rotation (adjust as needed)
-      repeat: -1, // infinite loop
-      ease: "Linear", // constant speed
+      duration: 4000,
+      repeat: -1,
+      ease: "Linear",
     });
   }
 
   shoot() {
     if (!this.cannon) return;
+
     const angle = this.cannon.rotation;
     const xOffset = 6;
     const yOffset = -4;
@@ -76,16 +91,35 @@ export default class MapUnit {
     gameRuntimeData.bullets.push(this.bullet);
   }
 
-  changeCountry(newCountry: string, newCollor: number) {
+  changeCountry(newCountry: string, newColor: number) {
     if (this.cannon) {
       this.cannon.destroy();
       this.cannon = undefined;
     }
 
-    this.country = newCountry;
-    this.color = newCollor;
-    this.unit.setTint(newCollor);
+    // Remove previous border
+    const oldBorder = this.unit.getData("border");
+    if (oldBorder) oldBorder.destroy();
 
+    this.country = newCountry;
+    this.color = newColor;
+    this.unit.setTint(newColor);
     this.unit.setData("mapUnit", this);
+
+    // Re-add the new border
+    const border = this.scene.add.graphics();
+    border.lineStyle(2, 0x000000, 1);
+
+    const halfWidth = gamePlayConfig.unitWidth / 2;
+
+    border.strokeRect(
+      this.unit.x - halfWidth,
+      this.unit.y - halfWidth,
+      gamePlayConfig.unitWidth,
+      gamePlayConfig.unitWidth
+    );
+
+    border.setDepth(1000);
+    this.unit.setData("border", border);
   }
 }
