@@ -101,8 +101,11 @@ export class GameMap {
           x * unitSize,
           row.y * unitSize,
           data.color,
-          countryName
+          countryName,
+          data.bulletColor
         );
+
+        mapUnit.addCannon();
 
         gameRuntimeData.units.push(mapUnit);
       }
@@ -121,7 +124,8 @@ export class GameMap {
             x * unitSize,
             y * unitSize,
             backgorundColor,
-            "default"
+            "default",
+            0x000000
           );
 
           gameRuntimeData.units.push(mapUnit);

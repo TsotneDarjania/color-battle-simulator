@@ -13,7 +13,8 @@ export default class MapUnit {
     public x: number,
     public y: number,
     public color: number,
-    public country: string
+    public country: string,
+    public bulletColor: number
   ) {
     this.unit = scene.unitGroup.create(
       x + gamePlayConfig.unitWidth / 2,
@@ -86,12 +87,13 @@ export default class MapUnit {
       bulletY,
       angle,
       this.country,
-      this.color
+      this.color,
+      this.bulletColor
     );
     gameRuntimeData.bullets.push(this.bullet);
   }
 
-  changeCountry(newCountry: string, newColor: number) {
+  changeCountry(newCountry: string, newColor: number, newBulletColor: number) {
     if (this.cannon) {
       this.cannon.destroy();
       this.cannon = undefined;
@@ -103,6 +105,7 @@ export default class MapUnit {
 
     this.country = newCountry;
     this.color = newColor;
+    this.bulletColor = newBulletColor;
     this.unit.setTint(newColor);
     this.unit.setData("mapUnit", this);
 

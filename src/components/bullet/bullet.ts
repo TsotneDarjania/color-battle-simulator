@@ -10,12 +10,13 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
     y: number,
     angle: number,
     public country: string,
-    public countryColor: number
+    public countryColor: number,
+    public bulletColor: number
   ) {
     super(scene, x, y, "circle");
     scene.add.existing(this);
     scene.physics.add.existing(this);
-    this.setTint(0xff4f00);
+    this.setTint(bulletColor);
 
     this.setDisplaySize(
       gamePlayConfig.unitWidth - 24,
@@ -63,7 +64,11 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
 
         if (targetUnit.country === this.country) return;
 
-        targetUnit.changeCountry(this.country, this.countryColor);
+        targetUnit.changeCountry(
+          this.country,
+          this.countryColor,
+          this.bulletColor
+        );
 
         this.destroy();
 
