@@ -9,6 +9,7 @@ import {
 } from "../../mapData";
 import GamePlay from "../../scenes/GamePlay";
 import MapUnit from "../mapUnit/MapUnit";
+import Tower from "../tower/tower";
 
 export class GameMap {
   private occupied = new Set<string>();
@@ -22,7 +23,7 @@ export class GameMap {
   generateMap() {
     // First add countries
     Object.entries(mapData).forEach(([countryName, countryMap]) => {
-      this.createCountryUnits(countryName, countryMap);
+      this.createTowers(countryName, countryMap);
     });
 
     // Then fill the rest with default gray units
@@ -88,28 +89,48 @@ export class GameMap {
     }
   }
 
-  private createCountryUnits(countryName: string, data: CountryMapData) {
+  private createTowers(countryName: string, data: CountryMapData) {
     const unitSize = gamePlayConfig.unitWidth;
 
-    data.rows.forEach((row) => {
-      for (let x = row.x[0]; x <= row.x[1]; x++) {
-        const posKey = `${x},${row.y}`;
-        this.occupied.add(posKey);
+    const tower = new Tower(
+      this.scene,
+      data.tower.x * unitSize,
+      data.tower.y * unitSize,
+      data.color,
+      countryName,
+      data.bulletColor
+    );
+    tower.addCannon(true);
 
-        const mapUnit = new MapUnit(
-          this.scene,
-          x * unitSize,
-          row.y * unitSize,
-          data.color,
-          countryName,
-          data.bulletColor
-        );
+    // for (let i = 0; i < 4; i++) {
+    //   const posKey = `${data.tower.x},${data.tower.y}`;
+    //   this.occupied.add(posKey);
+    // }
 
-        mapUnit.addCannon();
+    this.occupied.add(`${data.tower.x},${data.tower.y}`);
+    this.occupied.add(`${data.tower.x + 1},${data.tower.y + 0}`);
+    this.occupied.add(`${data.tower.x + 0},${data.tower.y + 1}`);
+    this.occupied.add(`${data.tower.x + 1},${data.tower.y + 1}`);
 
-        gameRuntimeData.units.push(mapUnit);
-      }
-    });
+    // data.tower.forEach((tower) => {
+    //   for (let x = row.x[0]; x <= row.x[1]; x++) {
+    //     const posKey = `${x},${row.y}`;
+    //     this.occupied.add(posKey);
+
+    //     const tower = new Tower(
+    //       this.scene,
+    //       x * unitSize,
+    //       row.y * unitSize,
+    //       data.color,
+    //       countryName,
+    //       data.bulletColor
+    //     );
+
+    //     tower.addCannon(true);
+
+    //     // gameRuntimeData.units.push(tower);
+    //   }
+    // });
   }
 
   private createDefaultUnits() {

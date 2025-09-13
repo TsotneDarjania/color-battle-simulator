@@ -3,7 +3,7 @@ import { gameRuntimeData } from "../../gameRuntimeData";
 import GamePlay from "../../scenes/GamePlay";
 import Bullet from "../bullet/bullet";
 
-export default class MapUnit {
+export default class Tower {
   unit!: Phaser.Physics.Arcade.Image;
   cannon: Phaser.GameObjects.Image | undefined;
   bullet!: Bullet;
@@ -19,17 +19,20 @@ export default class MapUnit {
     public bulletColor: number
   ) {
     this.unit = scene.unitGroup.create(
-      x + gamePlayConfig.unitWidth / 2,
-      y + gamePlayConfig.unitWidth / 2,
+      x + gamePlayConfig.unitWidth,
+      y + gamePlayConfig.unitWidth,
       "rect"
     ) as Phaser.Physics.Arcade.Image;
 
     this.unit.setImmovable(true);
     this.unit.setDisplaySize(
-      gamePlayConfig.unitWidth,
-      gamePlayConfig.unitWidth
+      gamePlayConfig.unitWidth * 2,
+      gamePlayConfig.unitWidth * 2
     );
-    this.unit.setSize(gamePlayConfig.unitWidth, gamePlayConfig.unitWidth);
+    this.unit.setSize(
+      gamePlayConfig.unitWidth * 2,
+      gamePlayConfig.unitWidth * 2
+    );
     this.unit.setTint(color);
 
     // ✅ Attach reference to self
@@ -39,32 +42,42 @@ export default class MapUnit {
     const border = this.scene.add.graphics();
     border.lineStyle(2, 0x000000, 1); // white border, thickness 2
 
-    const halfWidth = gamePlayConfig.unitWidth / 2;
+    const halfWidth = this.unit.getBounds().width / 2;
 
     border.strokeRect(
-      this.unit.x - halfWidth,
-      this.unit.y - halfWidth,
-      gamePlayConfig.unitWidth,
-      gamePlayConfig.unitWidth
+      this.unit.getBounds().centerX - halfWidth,
+      this.unit.getBounds().centerY - halfWidth,
+      gamePlayConfig.unitWidth * 2,
+      gamePlayConfig.unitWidth * 2
     );
 
     border.setDepth(1); // make sure it's above the unit
     this.unit.setData("border", border); // store border for potential cleanup
+
+    this.addTower();
+  }
+
+  addTower() {
+    const towerImage = this.scene.add.image(this.unit.x, this.unit.y, "tower");
+    towerImage.setScale(0.7);
+    towerImage.setDepth(1);
+
+    const darkerColor = this.darkenColor(this.color, 0.4);
+    towerImage.setTint(darkerColor);
   }
 
   addCannon(isMain: boolean) {
     if (isMain) {
       this.isMainCannon = true;
     }
-
     this.cannon = this.scene.add.image(this.unit.x, this.unit.y, "cannon");
-    this.cannon.setTint(0xff4f00);
+    this.cannon.alpha = 0;
 
+    this.cannon.setTint(0xff4f00);
     this.cannon.setDisplaySize(
       gamePlayConfig.unitWidth - 12,
       gamePlayConfig.unitWidth - 12
     );
-
     this.scene.tweens.add({
       targets: this.cannon,
       angle: 360,
@@ -72,6 +85,21 @@ export default class MapUnit {
       repeat: -1,
       ease: "Linear",
     });
+  }
+
+  darkenColor(color: number, factor = 0.8) {
+    // Extract RGB
+    let r = (color >> 16) & 0xff;
+    let g = (color >> 8) & 0xff;
+    let b = color & 0xff;
+
+    // Darken each channel
+    r = Math.floor(r * factor);
+    g = Math.floor(g * factor);
+    b = Math.floor(b * factor);
+
+    // Recombine into hex
+    return (r << 16) | (g << 8) | b;
   }
 
   shoot() {
@@ -97,38 +125,5 @@ export default class MapUnit {
       this.bulletColor
     );
     gameRuntimeData.bullets.push(this.bullet);
-  }
-
-  changeCountry(newCountry: string, newColor: number, newBulletColor: number) {
-    if (this.cannon) {
-      this.cannon.destroy();
-      this.cannon = undefined;
-    }
-
-    // Remove previous border
-    const oldBorder = this.unit.getData("border");
-    if (oldBorder) oldBorder.destroy();
-
-    this.country = newCountry;
-    this.color = newColor;
-    this.bulletColor = newBulletColor;
-    this.unit.setTint(newColor);
-    this.unit.setData("mapUnit", this);
-
-    // Re-add the new border
-    const border = this.scene.add.graphics();
-    border.lineStyle(2, 0x000000, 1);
-
-    const halfWidth = gamePlayConfig.unitWidth / 2;
-
-    border.strokeRect(
-      this.unit.x - halfWidth,
-      this.unit.y - halfWidth,
-      gamePlayConfig.unitWidth,
-      gamePlayConfig.unitWidth
-    );
-
-    border.setDepth(1000);
-    this.unit.setData("border", border);
   }
 }

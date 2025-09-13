@@ -17,7 +17,9 @@ export default class Preload extends Phaser.Scene {
     this.load.image("multiple-bullet", "img/multiple-bullet.png");
 
     this.load.image("arrow", "img/arrow.png");
-    
+
+    this.load.image("tower", "img/tower.png");
+
     //Flags
     this.load.image("brazil", "flags/brazil.png");
     this.load.image("germany", "flags/germany.png");
