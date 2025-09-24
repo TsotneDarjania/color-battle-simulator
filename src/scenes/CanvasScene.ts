@@ -26,7 +26,6 @@ export default class CanvasScene extends Phaser.Scene {
     this.gamePlaySceme = this.scene.get("GamePlay") as GamePlay;
 
     this.addWheels();
-    // this.addOverlayAndText();
     this.createMobileControls();
 
     const inputZone = this.add
@@ -38,12 +37,6 @@ export default class CanvasScene extends Phaser.Scene {
     const startSimulation = () => {
       if (this.controlsEnabled) return;
       this.controlsEnabled = true;
-
-      this.overlay.setVisible(false);
-      this.startText.setVisible(false);
-      this.infoTextLeft.setVisible(false);
-      this.infoTextKeys.setVisible(false);
-      this.infoTextRight.setVisible(false);
       inputZone.destroy();
 
       this.controlButtons.forEach((btn) => btn.setVisible(true));
@@ -57,8 +50,8 @@ export default class CanvasScene extends Phaser.Scene {
       });
     };
 
-    this.input.keyboard.on("keydown-SPACE", startSimulation);
-    inputZone.on("pointerdown", startSimulation);
+    this.input.keyboard.on("keydown-SPACE", startSimulation); 
+   
 
     window.addEventListener("orientationchange", () => {
       setTimeout(() => {

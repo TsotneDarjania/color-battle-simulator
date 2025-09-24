@@ -101,6 +101,7 @@ export class GameMap {
       data.bulletColor
     );
     tower.addCannon(true);
+    gameRuntimeData.units.push(tower);
 
     // for (let i = 0; i < 4; i++) {
     //   const posKey = `${data.tower.x},${data.tower.y}`;

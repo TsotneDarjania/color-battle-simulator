@@ -159,6 +159,7 @@ export class Wheel {
     const units = gameRuntimeData.units.filter(
       (u) => u.country === this.country
     );
+    
     if (units.length === 0) {
       this.destroy();
       return;
