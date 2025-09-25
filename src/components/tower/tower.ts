@@ -10,6 +10,11 @@ export default class Tower {
 
   isMainCannon = false;
 
+  health = 0;
+  healthText!: Phaser.GameObjects.Text;
+
+  isTower = true;
+
   constructor(
     public scene: GamePlay,
     public x: number,
@@ -55,6 +60,33 @@ export default class Tower {
     this.unit.setData("border", border); // store border for potential cleanup
 
     this.addTower();
+    this.addLeathText();
+  }
+
+  addLeathText() {
+    this.healthText = this.scene.add
+      .text(
+        this.x + this.unit.getBounds().width / 2 - 1,
+        this.y,
+        this.health.toString(),
+        {
+          fontFamily: "Arial",
+          fontSize: "36px",
+          fontStyle: "bold",
+          color: "#ffffff",
+          stroke: "#000000",
+          strokeThickness: 6,
+          shadow: {
+            offsetX: 2,
+            offsetY: 2,
+            color: "#000000",
+            blur: 4,
+            fill: true,
+          },
+        }
+      )
+      .setOrigin(0.5)
+      .setDepth(11);
   }
 
   addTower() {
@@ -85,6 +117,52 @@ export default class Tower {
       repeat: -1,
       ease: "Linear",
     });
+  }
+
+  addHealth() {
+    this.health++;
+    this.healthText.setText(this.health.toString());
+  }
+
+  changeCountry(newCountry: string, newColor: number, newBulletColor: number) {
+    if (this.health > 1) {
+      this.health--;
+      this.healthText.setText(this.health.toString());
+      return;
+    }
+
+    this.healthText.destroy()
+
+    if (this.cannon) {
+      this.cannon.destroy();
+      this.cannon = undefined;
+    }
+
+    // Remove previous border
+    const oldBorder = this.unit.getData("border");
+    if (oldBorder) oldBorder.destroy();
+
+    this.country = newCountry;
+    this.color = newColor;
+    this.bulletColor = newBulletColor;
+    this.unit.setTint(newColor);
+    this.unit.setData("mapUnit", this);
+
+    // Re-add the new border
+    const border = this.scene.add.graphics();
+    border.lineStyle(2, 0x000000, 1);
+
+    const halfWidth = gamePlayConfig.unitWidth / 2;
+
+    border.strokeRect(
+      this.unit.x - halfWidth,
+      this.unit.y - halfWidth,
+      gamePlayConfig.unitWidth,
+      gamePlayConfig.unitWidth
+    );
+
+    border.setDepth(1000);
+    this.unit.setData("border", border);
   }
 
   darkenColor(color: number, factor = 0.8) {

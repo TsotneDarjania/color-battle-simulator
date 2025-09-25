@@ -1,4 +1,5 @@
 import MapUnit from "../components/mapUnit/MapUnit";
+import Tower from "../components/tower/tower";
 import { gameRuntimeData } from "../gameRuntimeData";
 import CanvasScene from "../scenes/CanvasScene";
 import GamePlay from "../scenes/GamePlay";
@@ -29,7 +30,19 @@ export class GameManager {
       return;
     }
 
-    targetUnit.addCannon();
+    targetUnit.addCannon(false);
+  }
+
+  addHealth(country: string) {
+    const tower = gameRuntimeData.units.find(
+      (unit) => unit.country === country && unit.isTower
+    );
+
+    if (tower) {
+      (tower as Tower).addHealth();
+    } else {
+      console.warn(`No tower found for country: ${country}`);
+    }
   }
 
   openFire(country: string, multiple: number) {

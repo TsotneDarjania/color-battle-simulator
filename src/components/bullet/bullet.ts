@@ -25,7 +25,7 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
     this.setCircle(12);
     this.setBounce(1);
 
-    const speed = 80;
+    const speed = 90;
     this.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
 
     this.addColliderDetections();
@@ -36,7 +36,21 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
     this.scene.physics.add.collider(
       this,
       [...this.scene.gameMap.borders],
-      () => {}
+      (bullet: Phaser.GameObjects.GameObject) => {
+        const body = (bullet as Phaser.Physics.Arcade.Image)
+          .body as Phaser.Physics.Arcade.Body;
+        if (!body) return;
+
+        // Get current velocity
+        const vx = body.velocity.x;
+        const vy = body.velocity.y;
+
+        // Calculate new angle based on current velocity after bounce
+        const newAngle = Math.atan2(vy, vx);
+
+        // Apply rotation to the sprite (so it visually turns)
+        (bullet as Phaser.Physics.Arcade.Image).setRotation(newAngle);
+      }
     );
 
     // another Bullet

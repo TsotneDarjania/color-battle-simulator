@@ -50,8 +50,7 @@ export default class CanvasScene extends Phaser.Scene {
       });
     };
 
-    this.input.keyboard.on("keydown-SPACE", startSimulation); 
-   
+    this.input.keyboard.on("keydown-SPACE", startSimulation);
 
     window.addEventListener("orientationchange", () => {
       setTimeout(() => {
@@ -294,10 +293,13 @@ export default class CanvasScene extends Phaser.Scene {
   }
 
   onWheelResult(index: number, country: string, multiple: number) {
-    console.log(`Wheel result: ${index}, Country is: ${country}`);
+    // console.log(`Wheel result: ${index}, Country is: ${country}`);
     switch (index) {
       case 0:
         this.gamePlaySceme.gameManager.openFire(country, multiple);
+        break;
+      case 1:
+        this.gamePlaySceme.gameManager.addHealth(country);
         break;
       case 2:
         this.gamePlaySceme.gameManager.buildCannon(country);

@@ -9,6 +9,7 @@ export default class MapUnit {
   bullet!: Bullet;
 
   isMainCannon = false;
+  isTower = false
 
   constructor(
     public scene: GamePlay,
