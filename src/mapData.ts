@@ -11,7 +11,7 @@ export interface CountryMapData {
   bulletColor: number;
 }
 
-export const mapSize = 15;
+export const mapSize = 20;
 
 export const backgorundColor = 0xffffff;
 export const borderColor = 0xde8f6d;
@@ -25,19 +25,19 @@ export const mapData: Record<string, CountryMapData> = {
   },
   italy: {
     rows: null,
-    tower: { x: 0, y: 13 },
+    tower: { x: 0, y: 18 },
     color: 0x9b0c28,
     bulletColor: 0x32d911,
   },
   germany: {
     rows: null,
-    tower: { x: 13, y: 13 },
+    tower: { x: 18, y: 18 },
     color: 0x1e0942,
     bulletColor: 0xd91611,
   },
   spain: {
     rows: null,
-    tower: { x: 13, y: 0 },
+    tower: { x: 18, y: 0 },
     color: 0x38d126,
     bulletColor: 0x000000,
   },

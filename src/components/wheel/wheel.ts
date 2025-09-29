@@ -12,7 +12,7 @@ export class Wheel {
   isSpinning: boolean = false;
   autoSpinStarted: boolean = false;
 
-  segmentAngles = [120, 120, 60, 60];
+  segmentAngles = [120, 80, 80, 60, 20];
   baseColor = 0x222222;
   selectedColor = 0x4444aa;
 
@@ -45,7 +45,7 @@ export class Wheel {
 
   addFlag() {
     const flag = this.scene.add.image(this.x, this.y, this.country);
-    flag.setScale(0.65);
+    flag.setScale(0.67);
     flag.setDepth(-2);
     this.flag = flag;
   }
@@ -99,7 +99,7 @@ export class Wheel {
   }
 
   addIconsToSegments() {
-    const iconKeys = ["shoot", "empty", "new-cannon", "multiple-bullet"];
+    const iconKeys = ["shoot", "empty", "new-cannon", "multiple-bullet", "x2"];
     let currentAngle = 0;
     const iconRadius = this.radius * 0.65;
 
@@ -159,7 +159,6 @@ export class Wheel {
     const units = gameRuntimeData.units.filter(
       (u) => u.country === this.country
     );
-    
     if (units.length === 0) {
       this.destroy();
       return;
@@ -251,7 +250,14 @@ export class Wheel {
         if (iconKey === "multiple-bullet") {
           const value = parseInt(this.shootLabel.text);
           if (value < 30) {
-            this.shootLabel.setText((value + 1).toString());
+            this.shootLabel.setText((value +1).toString());
+          }
+        }
+
+        if (iconKey === "x2") {
+          const value = parseInt(this.shootLabel.text);
+          if (value < 30) {
+            this.shootLabel.setText((value *2).toString());
           }
         }
 
