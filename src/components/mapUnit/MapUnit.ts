@@ -8,9 +8,6 @@ export default class MapUnit {
   cannon: Phaser.GameObjects.Image | undefined;
   bullet!: Bullet;
 
-  isMainCannon = false;
-  isTower = false
-
   constructor(
     public scene: GamePlay,
     public x: number,
@@ -38,7 +35,7 @@ export default class MapUnit {
 
     // ✅ Draw rectangle border around the unit
     const border = this.scene.add.graphics();
-    border.lineStyle(2, 0x000000, 1); // white border, thickness 2
+    border.lineStyle(0.5, 0x000000, 1); // white border, thickness 2
 
     const halfWidth = gamePlayConfig.unitWidth / 2;
 
@@ -53,11 +50,7 @@ export default class MapUnit {
     this.unit.setData("border", border); // store border for potential cleanup
   }
 
-  addCannon(isMain: boolean) {
-    if (isMain) {
-      this.isMainCannon = true;
-    }
-
+  addCannon() {
     this.cannon = this.scene.add.image(this.unit.x, this.unit.y, "cannon");
     this.cannon.setTint(0xff4f00);
 
@@ -118,7 +111,7 @@ export default class MapUnit {
 
     // Re-add the new border
     const border = this.scene.add.graphics();
-    border.lineStyle(2, 0x000000, 1);
+    border.lineStyle(0.5, 0x000000, 1);
 
     const halfWidth = gamePlayConfig.unitWidth / 2;
 

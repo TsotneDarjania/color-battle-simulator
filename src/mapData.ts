@@ -20,25 +20,25 @@ export const mapData: Record<string, CountryMapData> = {
   brazil: {
     rows: null,
     tower: { x: 0, y: 0 },
-    color: 0x67ffc6,
-    bulletColor: 0xffffff,
+    color: 0xad030f,
+    bulletColor: 0xFFFFFF,
   },
   italy: {
     rows: null,
     tower: { x: 0, y: 18 },
-    color: 0x9b0c28,
-    bulletColor: 0x32d911,
+    color: 0x00ff44,
+    bulletColor: 0x3d423e,
   },
   germany: {
     rows: null,
     tower: { x: 18, y: 18 },
-    color: 0x1e0942,
-    bulletColor: 0xd91611,
+     color: 0x4287f5,
+    bulletColor: 0xFFFFFF,
   },
   spain: {
     rows: null,
     tower: { x: 18, y: 0 },
-    color: 0x38d126,
-    bulletColor: 0x000000,
+    color: 0xfff200,
+    bulletColor: 0x0055ff,
   },
 };
