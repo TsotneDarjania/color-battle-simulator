@@ -28,6 +28,7 @@ export default class MapUnit {
       gamePlayConfig.unitWidth
     );
     this.unit.setSize(gamePlayConfig.unitWidth, gamePlayConfig.unitWidth);
+    this.unit.setOffset(-9, -9);
     this.unit.setTint(color);
 
     // ✅ Attach reference to self

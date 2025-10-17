@@ -15,6 +15,9 @@ export default class Tower {
 
   isTower = true;
 
+  towerImage! : Phaser.GameObjects.Image;
+
+
   constructor(
     public scene: GamePlay,
     public x: number,
@@ -29,6 +32,7 @@ export default class Tower {
       "rect"
     ) as Phaser.Physics.Arcade.Image;
 
+
     this.unit.setImmovable(true);
     this.unit.setDisplaySize(
       gamePlayConfig.unitWidth * 2,
@@ -38,6 +42,7 @@ export default class Tower {
       gamePlayConfig.unitWidth * 2,
       gamePlayConfig.unitWidth * 2
     );
+    this.unit.setOffset(-29, -29);
     this.unit.setTint(color);
 
     // ✅ Attach reference to self
@@ -49,15 +54,15 @@ export default class Tower {
 
     const halfWidth = this.unit.getBounds().width / 2;
 
-    border.strokeRect(
-      this.unit.getBounds().centerX - halfWidth,
-      this.unit.getBounds().centerY - halfWidth,
-      gamePlayConfig.unitWidth * 2,
-      gamePlayConfig.unitWidth * 2
-    );
+    // border.strokeRect(
+    //   this.unit.getBounds().centerX - halfWidth,
+    //   this.unit.getBounds().centerY - halfWidth,
+    //   gamePlayConfig.unitWidth * 2,
+    //   gamePlayConfig.unitWidth * 2
+    // );
 
-    border.setDepth(1); // make sure it's above the unit
-    this.unit.setData("border", border); // store border for potential cleanup
+    // border.setDepth(1); // make sure it's above the unit
+    // this.unit.setData("border", border); // store border for potential cleanup
 
     this.addTower();
     this.addLeathText();
@@ -90,12 +95,12 @@ export default class Tower {
   }
 
   addTower() {
-    const towerImage = this.scene.add.image(this.unit.x, this.unit.y, "tower");
-    towerImage.setScale(0.7);
-    towerImage.setDepth(1);
+    this.towerImage = this.scene.add.image(this.unit.x, this.unit.y, "tower");
+    this.towerImage.setScale(0.7);
+    this.towerImage.setDepth(1);
 
     const darkerColor = this.darkenColor(this.color, 0.4);
-    towerImage.setTint(darkerColor);
+    this.towerImage.setTint(darkerColor);
   }
 
   addCannon(isMain: boolean) {
@@ -120,6 +125,7 @@ export default class Tower {
   }
 
   addHealth() {
+    if (!this.cannon) return;
     this.health++;
     this.healthText.setText(this.health.toString());
   }
@@ -131,7 +137,8 @@ export default class Tower {
       return;
     }
 
-    this.healthText.destroy()
+    this.healthText?.destroy()
+    this.towerImage?.destroy()
 
     if (this.cannon) {
       this.cannon.destroy();
@@ -149,20 +156,20 @@ export default class Tower {
     this.unit.setData("mapUnit", this);
 
     // Re-add the new border
-    const border = this.scene.add.graphics();
-    border.lineStyle(2, 0x000000, 1);
+    // const border = this.scene.add.graphics();
+    // border.lineStyle(2, 0x000000, 1);
 
-    const halfWidth = gamePlayConfig.unitWidth / 2;
+    // const halfWidth = gamePlayConfig.unitWidth / 2;
 
-    border.strokeRect(
-      this.unit.x - halfWidth,
-      this.unit.y - halfWidth,
-      gamePlayConfig.unitWidth,
-      gamePlayConfig.unitWidth
-    );
+    // border.strokeRect(
+    //   this.unit.x - halfWidth,
+    //   this.unit.y - halfWidth,
+    //   gamePlayConfig.unitWidth,
+    //   gamePlayConfig.unitWidth
+    // );
 
-    border.setDepth(1000);
-    this.unit.setData("border", border);
+    // border.setDepth(1000);
+    // this.unit.setData("border", border);
   }
 
   darkenColor(color: number, factor = 0.8) {

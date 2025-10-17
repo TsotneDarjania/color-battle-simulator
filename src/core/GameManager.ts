@@ -35,7 +35,7 @@ export class GameManager {
 
   addHealth(country: string) {
     const tower = gameRuntimeData.units.find(
-      (unit) => unit.country === country && unit.isTower
+      (unit) => unit.country === country && (unit as Tower).isTower
     );
 
     if (tower) {
