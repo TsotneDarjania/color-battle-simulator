@@ -50,19 +50,19 @@ export default class Tower {
 
     // ✅ Draw rectangle border around the unit
     const border = this.scene.add.graphics();
-    border.lineStyle(2, 0x000000, 1); // white border, thickness 2
+    border.lineStyle(0.5, 0x000000, 1); // white border, thickness 2
 
     const halfWidth = this.unit.getBounds().width / 2;
 
-    // border.strokeRect(
-    //   this.unit.getBounds().centerX - halfWidth,
-    //   this.unit.getBounds().centerY - halfWidth,
-    //   gamePlayConfig.unitWidth * 2,
-    //   gamePlayConfig.unitWidth * 2
-    // );
+    border.strokeRect(
+      this.unit.getBounds().centerX - halfWidth,
+      this.unit.getBounds().centerY - halfWidth,
+      gamePlayConfig.unitWidth * 2,
+      gamePlayConfig.unitWidth * 2
+    );
 
-    // border.setDepth(1); // make sure it's above the unit
-    // this.unit.setData("border", border); // store border for potential cleanup
+    border.setDepth(1); // make sure it's above the unit
+    this.unit.setData("border", border); // store border for potential cleanup
 
     this.addTower();
     this.addLeathText();

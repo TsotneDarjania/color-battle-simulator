@@ -33,6 +33,7 @@ export default class GamePlay extends Phaser.Scene {
     this.setupCameraControls();
     this.runCanvasScene();
     this.createGameManager();
+    this.add.image(400, 400, "border").setOrigin(0.5).setScale(0.616).setDepth(10);
   }
 
   adjustCameraZoomToFitMap() {
