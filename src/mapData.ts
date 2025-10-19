@@ -14,7 +14,7 @@ export interface CountryMapData {
 export const mapSize = 20;
 
 export const backgorundColor = 0xffffff;
-export const borderColor = 0x0C021C;
+export const borderColor = 0xd9b057;
 
 export const mapData: Record<string, CountryMapData> = {
   brazil: {

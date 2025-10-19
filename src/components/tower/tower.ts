@@ -72,11 +72,11 @@ export default class Tower {
     this.healthText = this.scene.add
       .text(
         this.x + this.unit.getBounds().width / 2 - 1,
-        this.y,
+        this.y+16,
         this.health.toString(),
         {
           fontFamily: "Arial",
-          fontSize: "36px",
+          fontSize: "26px",
           fontStyle: "bold",
           color: "#ffffff",
           stroke: "#000000",
@@ -95,7 +95,7 @@ export default class Tower {
   }
 
   addTower() {
-    this.towerImage = this.scene.add.image(this.unit.x, this.unit.y, "tower");
+    this.towerImage = this.scene.add.image(this.unit.x, this.unit.y + 10, "tower");
     this.towerImage.setScale(0.7);
     this.towerImage.setDepth(1);
 
