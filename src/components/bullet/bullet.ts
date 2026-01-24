@@ -4,6 +4,10 @@ import { gameRuntimeData } from "../../gameRuntimeData";
 import MapUnit from "../mapUnit/MapUnit";
 
 export default class Bullet extends Phaser.Physics.Arcade.Image {
+
+
+  health = 2;
+
   constructor(
     public scene: GamePlay,
     x: number,
@@ -11,7 +15,8 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
     angle: number,
     public country: string,
     public countryColor: number,
-    public bulletColor: number
+    public bulletColor: number,
+    public tower : {x : number, y : number}
   ) {
     super(scene, x, y, "circle");
     scene.add.existing(this);
@@ -37,6 +42,13 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
       this,
       [...this.scene.gameMap.borders],
       (bullet: Phaser.GameObjects.GameObject) => {
+
+
+        this.health -= 1;
+        if(this.health < 0){
+          this.destroy();
+        }
+
         const body = (bullet as Phaser.Physics.Arcade.Image)
           .body as Phaser.Physics.Arcade.Body;
         if (!body) return;
@@ -44,6 +56,7 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
         // Get current velocity
         const vx = body.velocity.x;
         const vy = body.velocity.y;
+
 
         // Calculate new angle based on current velocity after bounce
         const newAngle = Math.atan2(vy, vx);
@@ -81,7 +94,8 @@ export default class Bullet extends Phaser.Physics.Arcade.Image {
         targetUnit.changeCountry(
           this.country,
           this.countryColor,
-          this.bulletColor
+          this.bulletColor,
+          this.tower
         );
 
         this.destroy();

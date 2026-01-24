@@ -46,7 +46,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(borderColor)
+          .setTint(borderColor),
       );
 
       // Bottom
@@ -57,7 +57,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(borderColor)
+          .setTint(borderColor),
       );
     }
 
@@ -73,7 +73,7 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(borderColor)
+          .setTint(borderColor),
       );
 
       // Right
@@ -84,54 +84,34 @@ export class GameMap {
           .setOrigin(0.5)
           .refreshBody()
           .setImmovable(true)
-          .setTint(borderColor)
+          .setTint(borderColor),
       );
     }
   }
 
   private createTowers(countryName: string, data: CountryMapData) {
-    const unitSize = gamePlayConfig.unitWidth;
-
     const tower = new Tower(
       this.scene,
-      data.tower.x * unitSize,
-      data.tower.y * unitSize,
+      data.tower.x, // GRID X
+      data.tower.y, // GRID Y
       data.color,
       countryName,
-      data.bulletColor
+      data.bulletColor,
+      data.tower,
     );
-    tower.addCannon(true);
+
+    setTimeout(() => {
+      tower.addCannon(true);
+    }, 1000);
+
     gameRuntimeData.units.push(tower);
+    gameRuntimeData.towers.push(tower);
 
-    // for (let i = 0; i < 4; i++) {
-    //   const posKey = `${data.tower.x},${data.tower.y}`;
-    //   this.occupied.add(posKey);
-    // }
-
+    // occupy 2x2 tiles
     this.occupied.add(`${data.tower.x},${data.tower.y}`);
-    this.occupied.add(`${data.tower.x + 1},${data.tower.y + 0}`);
-    this.occupied.add(`${data.tower.x + 0},${data.tower.y + 1}`);
+    this.occupied.add(`${data.tower.x + 1},${data.tower.y}`);
+    this.occupied.add(`${data.tower.x},${data.tower.y + 1}`);
     this.occupied.add(`${data.tower.x + 1},${data.tower.y + 1}`);
-
-    // data.tower.forEach((tower) => {
-    //   for (let x = row.x[0]; x <= row.x[1]; x++) {
-    //     const posKey = `${x},${row.y}`;
-    //     this.occupied.add(posKey);
-
-    //     const tower = new Tower(
-    //       this.scene,
-    //       x * unitSize,
-    //       row.y * unitSize,
-    //       data.color,
-    //       countryName,
-    //       data.bulletColor
-    //     );
-
-    //     tower.addCannon(true);
-
-    //     // gameRuntimeData.units.push(tower);
-    //   }
-    // });
   }
 
   private createDefaultUnits() {
@@ -147,7 +127,8 @@ export class GameMap {
             y * unitSize,
             backgorundColor,
             "default",
-            0x000000
+            0x000000,
+            { x: 0, y: 0 },
           );
 
           gameRuntimeData.units.push(mapUnit);
