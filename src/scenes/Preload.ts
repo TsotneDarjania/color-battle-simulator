@@ -17,8 +17,7 @@ export default class Preload extends Phaser.Scene {
     this.load.image("shoot", "img/shoot.png");
     this.load.image("new-cannon", "img/new-cannon.png");
     this.load.image("multiple-bullet", "img/multiple-bullet.png");
-    this.load.image("x2", "img/x2.png"); 
-
+    this.load.image("x2", "img/x2.png");
 
     this.load.image("arrow", "img/arrow.png");
 
@@ -30,10 +29,16 @@ export default class Preload extends Phaser.Scene {
     this.load.image("spain", "flags/spain.png");
     this.load.image("italy", "flags/italy.png");
 
+    this.load.image("barca", "flags/Barca.png");
+    this.load.image("real", "flags/Real.png");
+    this.load.image("psg", "flags/PSG.png");
+    this.load.image("city", "flags/City.png");
+
     this.load.image("bmw", "logos/BMW.png");
     this.load.image("ford", "logos/Ford.png");
     this.load.image("mercedes", "logos/Mercedes.png");
     this.load.image("toyota", "logos/Toyota.png");
+
   }
 
   create() {

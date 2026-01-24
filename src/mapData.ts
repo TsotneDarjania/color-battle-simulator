@@ -13,29 +13,29 @@ export interface CountryMapData {
 
 export const mapSize = 20;
 
-export const backgorundColor = 0xffffff;
+export const backgorundColor = 0x697368;
 export const borderColor = 0xd9b057;
 
 export const mapData: Record<string, CountryMapData> = {
-  brazil: {
+  germany: {
     rows: null,
     tower: { x: 0, y: 0 },
     color: 0xad030f,
     bulletColor: 0xFFFFFF,
   },
-  italy: {
+  spain: {
     rows: null,
     tower: { x: 0, y: 18 },
     color: 0x00ff44,
-    bulletColor: 0x3d423e,
+    bulletColor: 0xb50021,
   },
-  germany: {
+  brazil: {
     rows: null,
     tower: { x: 18, y: 18 },
-     color: 0x4287f5,
-    bulletColor: 0xFFFFFF,
+    color: 0x4287f5,
+    bulletColor: 0xffe600,
   },
-  spain: {
+  italy: {
     rows: null,
     tower: { x: 18, y: 0 },
     color: 0xfff200,
